@@ -1,0 +1,3 @@
+
+# mcp 23017 tutorial
+https://learn.adafruit.com/using-mcp23008-mcp23017-with-circuitpython/python-circuitpython
