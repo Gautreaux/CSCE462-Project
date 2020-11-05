@@ -1,3 +1,6 @@
 
 # mcp 23017 tutorial
 https://learn.adafruit.com/using-mcp23008-mcp23017-with-circuitpython/python-circuitpython
+
+# direct to adhoc
+http://192.168.0.199/adhoc/websocketsTesting/index.html
