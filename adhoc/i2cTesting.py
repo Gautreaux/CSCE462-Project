@@ -57,9 +57,6 @@ def rbgledThread():
         pinG.value = False
 
 
-def interruptCallback(_):
-    print("Callback")
-
 try:
     t = threading.Thread(target=rbgledThread)
     t.start()
