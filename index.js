@@ -13,6 +13,12 @@ function initFunction() {
         myPort = '20462'
     }
 
+    element = document.getElementById("hostField");
+    element.innerHTML = "HOST: " + myHost;
+
+    element = document.getElementById("portField");
+    element.innerHTML = "PORT: " + myPort;
+
     s = "ws://" + myHost + ":" + myPort;
     console.log("Client started. Tying connection on: " + s)
 

@@ -27,12 +27,15 @@ if __name__ == "__main__":
 
     while(True):  
         print(f"IsRaspi resolved to {isRaspi()}")          
-        serverRes = launchServer(buildConnectionHandler(instructionQueue, producerQueue),
-                host = DEFAULT_HOST if isRaspi() else FALLBACK_HOST,
-                port = DEFAULT_PORT if isRaspi() else FALLBACK_PORT)
+        # serverRes = launchServer(buildConnectionHandler(instructionQueue, producerQueue),
+        #         host = DEFAULT_HOST if isRaspi() else FALLBACK_HOST,
+        #         port = DEFAULT_PORT if isRaspi() else FALLBACK_PORT)
+
+        from connectionHandler import handler
+        serverRes = launchServer(handler, FALLBACK_HOST, FALLBACK_PORT)
+
         if serverRes is True:
-            #server started sucessfully,
-            print("Server started sucessfully")
+            print("Server started successfully")
             break
         else:
             print("Server failed to start")
@@ -47,3 +50,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Keyboard interrupt caught, exiting.")
         exitEvent.trigger()
+    
+    # any final cleanup
+    # will not be run until after webserver stops

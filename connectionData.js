@@ -1,2 +1,2 @@
-myHost="192.168.0.199";
+myHost="localhost";
 myPort="20462";
