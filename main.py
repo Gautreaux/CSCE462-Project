@@ -10,18 +10,22 @@ from gpioHandler import gpioHandler
 from serverBackend import launchServer
 from synchronization import *
 
+from queue import SimpleQueue
+
 
 if __name__ == "__main__":
     multiSema = MultiSemaphore()
     exitEvent = SignaledEvent(multiSema)
     instructionQueue = SignaledQueue(multiSema)
 
+    producerQueue = SimpleQueue()
 
-    gpioThread = threading.Thread(target=gpioHandler, args=[multiSema, exitEvent, instructionQueue])
+    gpioThread = threading.Thread(target=gpioHandler, 
+        args=[multiSema, exitEvent, instructionQueue, producerQueue])
     gpioThread.start()
 
     while(True):
-        serverRes = launchServer(buildConnectionHandler(instructionQueue))
+        serverRes = launchServer(buildConnectionHandler(instructionQueue, producerQueue))
         if serverRes is True:
             #server started sucessfully,
             print("Server started sucessfully")

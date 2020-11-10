@@ -6,7 +6,7 @@ from time import sleep
 DEFAULT_PORT = "20462"
 DEFAULT_HOST = "192.168.0.199"
 
-def launchServer( connectionHandler, host=DEFAULT_HOST, port=DEFAULT_PORT):
+def launchServer(connectionHandler, host=DEFAULT_HOST, port=DEFAULT_PORT):
     
     print(f"Starting Server at {host}:{port}")
 

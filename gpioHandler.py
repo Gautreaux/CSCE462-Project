@@ -1,7 +1,7 @@
 
 from time import sleep
 
-def gpioHandler(multiSema, exitEvent, instructionQ):
+def gpioHandler(multiSema, exitEvent, instructionQ, producerQ):
     # TODO - gpio setup
 
     print("GPIO setup complete")
@@ -13,7 +13,10 @@ def gpioHandler(multiSema, exitEvent, instructionQ):
             print("GPIO thread exit triggered")
             break
 
+        
         print(f"New instruction: {instructionQ.get()}")
+        producerQ.put("GPIO THINGY")
+        print(f"Done with put")
     
-    #called when the exit even is triggered
+    #called when the exit event is triggered
     print("GPIO exit completed")
