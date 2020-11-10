@@ -7,8 +7,9 @@ from queue import Queue
 
 from connectionHandler import buildConnectionHandler
 from gpioHandler import gpioHandler
-from serverBackend import launchServer
+from serverBackend import *
 from synchronization import *
+from util import *
 
 from queue import SimpleQueue
 
@@ -24,8 +25,11 @@ if __name__ == "__main__":
         args=[multiSema, exitEvent, instructionQueue, producerQueue])
     gpioThread.start()
 
-    while(True):
-        serverRes = launchServer(buildConnectionHandler(instructionQueue, producerQueue))
+    while(True):  
+        print(f"IsRaspi resolved to {isRaspi()}")          
+        serverRes = launchServer(buildConnectionHandler(instructionQueue, producerQueue),
+                host = DEFAULT_HOST if isRaspi() else FALLBACK_HOST,
+                port = DEFAULT_PORT if isRaspi() else FALLBACK_PORT)
         if serverRes is True:
             #server started sucessfully,
             print("Server started sucessfully")

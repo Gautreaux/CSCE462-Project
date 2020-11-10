@@ -4,3 +4,9 @@ https://learn.adafruit.com/using-mcp23008-mcp23017-with-circuitpython/python-cir
 
 # direct to adhoc
 http://192.168.0.199/adhoc/websocketsTesting/index.html
+
+# direct to pi
+http://192.168.0.199
+
+# direct to local
+file:///D:/CSCE%20462/CSCE462-Project/index.html
