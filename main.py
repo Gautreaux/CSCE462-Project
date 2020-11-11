@@ -1,55 +1,35 @@
 
 import asyncio
-import threading
-from time import sleep
-from queue import Queue
 
 
 from connectionHandler import buildConnectionHandler
 from gpioHandler import gpioHandler
 from serverBackend import *
-from synchronization import *
 from util import *
-
-from queue import SimpleQueue
 
 
 if __name__ == "__main__":
-    multiSema = MultiSemaphore()
-    exitEvent = SignaledEvent(multiSema)
-    instructionQueue = SignaledQueue(multiSema)
-
-    producerQueue = SimpleQueue()
-
-    gpioThread = threading.Thread(target=gpioHandler, 
-        args=[multiSema, exitEvent, instructionQueue, producerQueue])
-    gpioThread.start()
-
-    while(True):  
-        print(f"IsRaspi resolved to {isRaspi()}")          
-        # serverRes = launchServer(buildConnectionHandler(instructionQueue, producerQueue),
-        #         host = DEFAULT_HOST if isRaspi() else FALLBACK_HOST,
-        #         port = DEFAULT_PORT if isRaspi() else FALLBACK_PORT)
-
-        from connectionHandler import handler
-        serverRes = launchServer(handler, FALLBACK_HOST, FALLBACK_PORT)
-
-        if serverRes is True:
-            print("Server started successfully")
-            break
-        else:
-            print("Server failed to start")
-            sleep(5)
-    
-
-    #last bit
     try:
-        asyncio.get_event_loop().run_forever()
+        loop = asyncio.get_event_loop()
+
+        inboundQ = asyncio.Queue()
+        outboundQ = asyncio.Queue()
+
+        gpio_coro = gpioHandler(inboundQ, outboundQ)
+
+        server_coro = launchServer(buildConnectionHandler(inboundQ, outboundQ),
+                host = DEFAULT_HOST if isRaspi() else FALLBACK_HOST,
+                port = DEFAULT_PORT if isRaspi() else FALLBACK_PORT)
+
+        # Kind of want one to cancel the other if it ends but whatever
+        loop.run_until_complete(server_coro)
+        loop.run_until_complete(gpio_coro)
+        loop.run_forever()
+
         #any code down here would not be reachable until the server closes its socket
-        # under normal circumstances, this means this code is unreachable  
+        # under normal circumstances, this means this code is unreachable
     except KeyboardInterrupt:
         print("Keyboard interrupt caught, exiting.")
-        exitEvent.trigger()
-    
+
     # any final cleanup
     # will not be run until after webserver stops

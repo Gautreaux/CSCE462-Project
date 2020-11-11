@@ -18,9 +18,6 @@ def launchServer( connectionHandler, host=DEFAULT_HOST, port=DEFAULT_PORT):
         print(f"myHost=\"{host}\";", file=f)
         print(f"myPort=\"{port}\";", file=f)
 
-    server = websockets.serve(connectionHandler, host, port)
-    try:
-        asyncio.get_event_loop().run_until_complete(server)
-        return True
-    except OSError as e:
-        return False
+    server = websockets.server.serve(connectionHandler, host, port)
+    # print(f"Server started?")
+    return server
