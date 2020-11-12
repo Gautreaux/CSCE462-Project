@@ -30,6 +30,20 @@ if __name__ == "__main__":
         # under normal circumstances, this means this code is unreachable
     except KeyboardInterrupt:
         print("Keyboard interrupt caught, exiting.")
+        all_tasks = asyncio.Task.all_tasks(loop=loop)
+        for task in all_tasks:
+            task.cancel()
+        loop.run_until_complete(
+            asyncio.gather(
+                *all_tasks,
+                loop=loop,
+                return_exceptions=True # all tasks get a chance to finish
+            )
+        )
+        # raise
+    finally:
+        loop.close()
+    print("Clean shutdown occurred")
 
     # any final cleanup
     # will not be run until after webserver stops
