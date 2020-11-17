@@ -34,7 +34,7 @@ class GenericPin(ABC):
 
     def isOutput(self):
         return self.dir == GenericPin.OUTPUT
-    
+
     @abstractmethod
     def switchToOutput(self):
         raise NotImplementedError
@@ -63,11 +63,12 @@ class LocalPin(GenericPin):
 
         super().__init__(pinObj, initalDirection, destructorVariant)
 
-        GPIO.setup(self.pinObj, GPIO.OUT if self.dir == GenericPin.OUTPUT else GPIO.IN)
         if(LocalPin.PinCounter == 0):
             GPIO.setmode(GPIO.BCM)
         LocalPin.PinCounter += 1
-    
+
+        GPIO.setup(self.pinObj, GPIO.OUT if self.dir == GenericPin.OUTPUT else GPIO.IN)
+
     def __del__(self):
         super().__del__()
 
@@ -112,9 +113,9 @@ class MCP23017Pin(GenericPin):
         self.pinObj.direction = Direction.INPUT
         self.dir = mode
         if(mode == GenericPin.INPUT_PULL_UP):
-            pinObj.pull = Pull.UP
+            self.pinObj.pull = Pull.UP
         elif(mode == GenericPin.INPUT_PULL_DOWN):
-            pinObj.pull = Pull.DOWN
+            self.pinObj.pull = Pull.DOWN
 
     def setValue(self, value):
         assert(self.isOutput())
@@ -122,4 +123,4 @@ class MCP23017Pin(GenericPin):
 
     def getValue(self):
         assert(self.isInput())
-        return GenericPin.HIGH if self.pinObj is True else GenericPin.LOW
+        return GenericPin.HIGH if self.pinObj.value is True else GenericPin.LOW
