@@ -2,6 +2,9 @@
 <head>
     <script src = "index.js"></script>
     <script src = "connectionData.js"></script>
+    <script src = "frameVisuals.js"></script>
+    <script src = "frameFunction.js"></script>
+    <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 
@@ -10,4 +13,53 @@
     <div id="hostField">HOST</div>
     <div id="portField">PORT</div>
     <button onclick="send('button')">Send Button</button>
+    
+    <div id="contentBound">
+        <div class="flexContent" id=frameContent>
+            <img src="Images/carriageA.png" alt="Carriage Element" id="carriageA" class="carriage">
+            <img src="Images/carriageB.png" alt="Carriage Element" id="carriageB" class="carriage">
+            <img src="Images/carriageC.png" alt="Carriage Element" id="carriageC" class="carriage">
+            <img src="Images/carriageD.png" alt="Carriage Element" id="carriageD" class="carriage">
+            <img src="Images/gantryA.png" alt="Gantry Element" id="gantryA" , class="gantry">
+            <img src="Images/gantryB.png" alt="Gantry Element" id="gantryB" , class="gantry">
+            <div class = gantryCollider onclick="gantryClick()" id="gantryACollider"></div>
+            <div class = gantryCollider onclick="gantryClick()" id="gantryBCollider"></div>
+            <img src="Images/frame_demask.png" alt="Base frame Image" id="frameImage">
+            
+        </div>
+        <div class="flexContent">
+            <H4>Master Controls</H4>
+            <!-- TODO: functionality -->
+            <button>STOP</button>
+        </div>
+        <div class="flexContent">
+            <H4>Gantry A Controls</H4>
+            <!-- TODO functionality -->
+            <button>Move Up</button>
+            <!-- TODO functionality -->
+            <button>Move Down</button>
+        </div>
+        <div class="flexContent">
+            <H4>Gantry B Controls</H4>
+            <!-- TODO functionality -->
+            <button>Move Up</button>
+            <!-- TODO functionality -->
+            <button>Move Down</button>
+        </div>
+        <div class="flexContent">
+            <H4>Manual Connection</H4>
+            <!-- TODO functionality -->
+            <!-- collect server ip and port, attempt connection -->
+        </div>
+        <div class="flexContent">
+            <H4>Test Message</H4>
+            <!-- TODO functionality -->
+            <!-- collect user input and send a message -->
+        </div>        
+        <!-- <div class="flexContent"></div>
+        <div class="flexContent"></div>
+        <div class="flexContent"></div>
+        <div class="flexContent"></div>
+        <div class="flexContent"></div> -->
+    </div>
 </body>

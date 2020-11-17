@@ -32,6 +32,11 @@ function initFunction() {
     socket.onerror = onSocketError; //called when error
     socket.onmessage = onSocketReceive; //called each message received
     socket.onclose = onSocketClose; //called each close
+
+    window.addEventListener('resize', rescaleHandler);
+    rescaleHandler(); //run the first time
+    positionGantryA(0);
+    positionGantryB(1);
 }
 
 //called when the socket establishes a connection to the server

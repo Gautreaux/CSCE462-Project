@@ -1,0 +1,44 @@
+:root{
+    --frameImageSize: 50vw;
+}
+
+#contentBound{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.flexContent{
+    border: 2px solid black;
+    background-color: aqua;  
+    margin: 5px;
+}
+
+#frameContent{
+    width: var(--frameImageSize);
+    height: var(--frameImageSize);
+}
+
+#frameImage{
+    width: 100%;
+    height: 100%;
+}
+
+.carriage, .gantry, .gantryCollider{
+    position: absolute;
+    transform-origin: top left;
+
+    /* TODO remove: */
+    border: 2px solid green;
+}
+
+.gantryCollider{
+    width: var(--frameImageSize);
+    height: 20%;
+    /* TODO Remove */
+    border: 2px solid orange;
+    display: inline-block;
+}
+
+/* .carriage{display: none;} */
+
