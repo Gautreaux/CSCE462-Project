@@ -24,6 +24,8 @@ class GenericStepper:
         self.breakMode = breakMode
         self.homed = False
         self.steps = 0
+        self.lastMode = False
+        self.stp.setValue(GenericPin.LOW)
 
         self.enable(enableState)
 
@@ -33,9 +35,20 @@ class GenericStepper:
             self.enable(GenericStepper.ENABLE)
         self.setDir(direction)
         self.steps += 1 if direction is GenericStepper.DIRECTION_STANDARD else -1
+
+        # if(self.lastMode is False):
+        #     self.lastMode = True
+        #     self.stp.setValue(GenericPin.HIGH)
+        # else:
+        #     self.lastMode = False
+        #     self.stp.setValue(GenericPin.LOW)
+
         self.stp.setValue(GenericPin.HIGH)
-        await asyncio.sleep(.001) # 1ms sleep to stabilize
+        await asyncio.sleep(.001)
         self.stp.setValue(GenericPin.LOW)
+
+        await asyncio.sleep(.001) # 1ms sleep to stabilize
+
         if(self.breakMode is GenericStepper.MODE_COAST):
             self.enable(GenericStepper.DISABLE)
 

@@ -13,8 +13,8 @@ from genericAxis import GenericAxis
 async def gpioHandler(inboundQ, outboundQ):
     # controller = GPIOController()
     async with GPIOController() as controller:
-        mcpProtocol = MCP23017Protocol()
-        controller.registerProtocol(mcpProtocol)
+        # mcpProtocol = MCP23017Protocol()
+        # controller.registerProtocol(mcpProtocol)
         
         print(f"Available gpio protocols: {controller.getProtocols()}")
 
@@ -23,45 +23,65 @@ async def gpioHandler(inboundQ, outboundQ):
         # tsetPin2 = controller.registerPin(f"{mcpProtocol.prefix}:3",
         #     GenericPin.OUTPUT, GenericPin.ON_DESTRUCT_OUT_LOW)
 
-        testRedPin = controller.registerPin(f"{mcpProtocol.prefix}:7",
-                GenericPin.OUTPUT, GenericPin.ON_DESTRUCT_OUT_LOW)
+        # testRedPin = controller.registerPin(f"{mcpProtocol.prefix}:7",
+        #         GenericPin.OUTPUT, GenericPin.ON_DESTRUCT_OUT_LOW)
         # testGrnPin = controller.registerPin(f"{mcpProtocol.prefix}:6")
         # testBluPin = controller.registerPin(f"{mcpProtocol.prefix}:5")
 
-        await asyncio.sleep(.5)
-        testRedPin.setValue(GenericPin.HIGH)
-        await asyncio.sleep(.5)
-        testRedPin.setValue(GenericPin.LOW)
-        await asyncio.sleep(.5)
-        testRedPin.setValue(GenericPin.HIGH)
+        # await asyncio.sleep(.5)
+        # testRedPin.setValue(GenericPin.HIGH)
+        # await asyncio.sleep(.5)
+        # testRedPin.setValue(GenericPin.LOW)
+        # await asyncio.sleep(.5)
+        # testRedPin.setValue(GenericPin.HIGH)
 
-        enablePin = controller.registerPin("local:10", GenericPin.OUTPUT)
-        dirPin = controller.registerPin("local:9", GenericPin.OUTPUT)
-        stepPin = controller.registerPin("local:11", GenericPin.OUTPUT)
+        # try:
+        #     dirPin = controller.registerPin("local:17", GenericPin.OUTPUT)
+        #     stepPin = controller.registerPin("local:27", GenericPin.OUTPUT)
+        #     enablePin = controller.registerPin("local:22", GenericPin.OUTPUT)
 
-        motor = GenericStepper(enablePin, stepPin, dirPin)
+        #     # dirPin = controller.registerPin("local:10", GenericPin.OUTPUT)
+        #     # stepPin = controller.registerPin("local:9", GenericPin.OUTPUT)
+        #     # enablePin = controller.registerPin("local:11", GenericPin.OUTPUT)
+        # except:
+        #     print("Pin error")
+        # else:
+        #     print("Pin OK")
 
-        # print("Rotating 400 steps:")
-        await motor.RotateSteps(GenericStepper.DIRECTION_STANDARD, 400)
-        await asyncio.sleep(1)
-        await motor.RotateSteps(GenericStepper.DIRECTION_REVERSE, 400)
+        # try: 
+        #     motor = GenericStepper(enablePin, stepPin, dirPin)
+        # except:
+        #     print("Motor error")
+        # else:
+        #     print("Motor OK")
+        #
+        # # print("Rotating 400 steps:")
+        # await motor.RotateSteps(GenericStepper.DIRECTION_STANDARD, 400)
+        # await asyncio.sleep(1)
+        # await motor.RotateSteps(GenericStepper.DIRECTION_REVERSE, 400)
 
-        buttonPin = controller.registerPin(f"{mcpProtocol.prefix}:8", GenericPin.INPUT_PULL_UP)
-        limit = GenericLimit(buttonPin)
+        # buttonPin = controller.registerPin(f"{mcpProtocol.prefix}:8", GenericPin.INPUT_PULL_UP)
+        # limit = GenericLimit(buttonPin)
 
         # while True:
         #     print(f"Pushed: {limit.isPressed()}")
         #     await asyncio.sleep(1)
 
-        axis = GenericAxis(limit, motor)
-        await axis.home()
+        # axis = GenericAxis(limit, motor)
+        # await axis.home()
 
         print("GPIO initalized")
         try:
             while True:
                 t = await inboundQ.get()
-                print(f"Echoing t: {t}" )
-                await outboundQ.put(t)
+                tokens = t.split(" ")
+
+                if(tokens[0] == 'ECHO'):
+                    m = t[t.find(' ')+1:]
+                    print(f"Echoing t: {m}" )
+                    await outboundQ.put(t)
+                else:
+                    print(f"Unrecognized Command: {t}")
         except asyncio.CancelledError:
             print("GPIO CANCEL")
         finally:

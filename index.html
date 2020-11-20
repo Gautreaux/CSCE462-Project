@@ -4,16 +4,14 @@
     <script src = "connectionData.js"></script>
     <script src = "frameVisuals.js"></script>
     <script src = "frameFunction.js"></script>
+    <script src = "genericFunction.js"></script>
+    <script src = "motorCommands.js"></script>
     <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 
 <body onload="initFunction()" onunload="cleanupFunction()" id="body">
-    Turns green on websockets connection, red on failure
-    <div id="hostField">HOST</div>
-    <div id="portField">PORT</div>
-    <button onclick="send('button')">Send Button</button>
-    
+    Turns green on websockets connection, red on failure    
     <div id="contentBound">
         <div class="flexContent" id=frameContent>
             <img src="Images/carriageA.png" alt="Carriage Element" id="carriageA" class="carriage">
@@ -30,29 +28,46 @@
         <div class="flexContent">
             <H4>Master Controls</H4>
             <!-- TODO: functionality -->
-            <button>STOP</button>
+            <button style="width: 100%;">STOP</button>
+            <div id="expandingTable">
+                <div class="controlRow">
+                    _:
+                    <button onmousedown="motorContinue('_', LEFT)" onmouseup="motorDiscontinue('_', LEFT)">&lt&lt</button>
+                    <button onclick="motorStep('_', LEFT, 1)">&lt</button>
+                    <button onclick="motorStep('_', RIGHT, 1)">&gt</button>
+                    <button onmousedown="motorContinue('_', RIGHT)" onmouseup="motorDiscontinue('_', RIGHT)">&gt&gt</button>
+                    Enable:
+                    <input type="checkBox" onclick="motorEnable('_', this)">
+                </div>
+            </div>
         </div>
-        <div class="flexContent">
+        <div class="flexContent" style="display: none;">
             <H4>Gantry A Controls</H4>
             <!-- TODO functionality -->
-            <button>Move Up</button>
+            <button onclick="notImplemented()">Move Up</button>
             <!-- TODO functionality -->
-            <button>Move Down</button>
+            <button onclick="notImplemented()">Move Down</button>
         </div>
-        <div class="flexContent">
+        <div class="flexContent" style="display: none;">
             <H4>Gantry B Controls</H4>
             <!-- TODO functionality -->
-            <button>Move Up</button>
+            <button onclick="notImplemented()">Move Up</button>
             <!-- TODO functionality -->
-            <button>Move Down</button>
+            <button onclick="notImplemented()">Move Down</button>
         </div>
         <div class="flexContent">
             <H4>Manual Connection</H4>
             <!-- TODO functionality -->
             <!-- collect server ip and port, attempt connection -->
+            <button onclick="manualConnection()">Connect</button>
+            <input type="path", id="manualConnection">
+            <div id="hostField">HOST</div>
+            <div id="portField">PORT</div>
         </div>
         <div class="flexContent">
             <H4>Test Message</H4>
+            <input type="text" id="testMessageInput">
+            <button onclick="sendTestMessage()">Send</button>
             <!-- TODO functionality -->
             <!-- collect user input and send a message -->
         </div>        

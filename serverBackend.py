@@ -4,7 +4,7 @@ import sys
 from time import sleep
 
 DEFAULT_PORT = "20462"
-DEFAULT_HOST = "192.168.0.199"
+DEFAULT_HOST = "192.168.0.198"
 
 FALLBACK_PORT = DEFAULT_PORT
 FALLBACK_HOST = "localhost"

@@ -13,30 +13,44 @@ function initFunction() {
         myPort = '20462'
     }
 
+    let s = "ws://" + myHost + ":" + myPort;
+
+    connect(s);
+
+    window.addEventListener('resize', rescaleHandler);
+    rescaleHandler(); //run the first time
+    positionGantryA(0);
+    positionGantryB(1);
+
+    initalizeControlTable();
+}
+
+//connect to a websockets server at path
+function connect(path) {
+    if(mySocket != null){
+        mySocket.close();
+        mySocket = null;
+    }
+
     element = document.getElementById("hostField");
     element.innerHTML = "HOST: " + myHost;
 
     element = document.getElementById("portField");
     element.innerHTML = "PORT: " + myPort;
 
-    s = "ws://" + myHost + ":" + myPort;
-    console.log("Client started. Tying connection on: " + s)
+    
+    console.log("Client started. Tying connection on: " + path)
 
     setStatus("Socket Connecting", "yellow")
 
     //create the socket object
-    const socket = new WebSocket(s)
+    const socket = new WebSocket(path)
 
     //add the callbacks as necessary
     socket.onopen = onSocketOpen; //called when connection established
     socket.onerror = onSocketError; //called when error
     socket.onmessage = onSocketReceive; //called each message received
     socket.onclose = onSocketClose; //called each close
-
-    window.addEventListener('resize', rescaleHandler);
-    rescaleHandler(); //run the first time
-    positionGantryA(0);
-    positionGantryB(1);
 }
 
 //called when the socket establishes a connection to the server
