@@ -13,9 +13,8 @@ from genericAxis import GenericAxis
 def getMotorId(charID):
     return ord(charID) - ord('A')
 
-async def gpioHandler(inboundQ, outboundQ):
-    # controller = GPIOController()
-    async with GPIOController() as controller:
+def gpioInit():
+    with GPIOController() as controller:
         mcpProtocol = MCP23017Protocol()
         controller.registerProtocol(mcpProtocol)
         
@@ -68,37 +67,66 @@ async def gpioHandler(inboundQ, outboundQ):
             axisSet[i] = GenericAxis(limitsSet[i], motorsSet[i])
 
         print("GPIO initalized")
-        try:
-            while True:
-                t = await inboundQ.get()
-                tokens = t.split(" ")
+    return (motorSets, pinSets, motorsSet, buttonPins, limitsSet, axisSet)
 
-                # await outboundQ.put(f"L A {'+' if limit.isPressed() else '-'}")
-                # print(t)
 
-                if(tokens[0] == 'ECHO'):
-                    m = t[t.find(' ')+1:]
-                    print(f"Echoing t: {m}" )
-                    await outboundQ.put(t)
-                elif(tokens[0] == 'ENBL'):
-                    motor = motorsSet[getMotorId(tokens[1])]
-                    motor.enable(GenericStepper.ENABLE if tokens[2] == '+' else GenericStepper.DISABLE)
-                    print(f"Processed ENBL: {t}")
-                elif(tokens[0] == 'HOME'):
-                    axis = axisSet[getMotorId(tokens[1])]
-                    #THIS is bad b/c its not interruptable
-                    #FIXME
-                    await axis.home(GenericStepper.DIRECTION_REVERSE)
-                elif(tokens[0] == 'M'):
-                    motor = motorsSet[getMotorId(tokens[1])]
-                    await motor.RotateSteps(
-                            GenericStepper.DIRECTION_STANDARD if tokens[2] == "+" 
-                            else GenericStepper.DIRECTION_REVERSE,
-                            int(tokens[3]))
-                else:
-                    print(f"Unrecognized Command: {t}")
-        except asyncio.CancelledError:
-            print("GPIO CANCEL")
-        finally:
-            pass
-        return
+async def pushFunction(outboundQ, gpio):
+    motorSets = gpio[0]
+    pinSets = gpio[1]
+    motorsSet = gpio[2]
+    buttonPins = gpio[3]
+    limitsSet = gpio[4]
+    axisSet = gpio[5]
+
+    try:
+        while True:
+            print("PUSH")
+            await asyncio.sleep(1)
+    except asyncio.CancelledError:
+        print("PUSH CANCEL")
+    finally:
+        pass
+    return
+
+async def gpioHandler(inboundQ, outboundQ, gpio):
+    motorSets = gpio[0]
+    pinSets = gpio[1]
+    motorsSet = gpio[2]
+    buttonPins = gpio[3]
+    limitsSet = gpio[4]
+    axisSet = gpio[5]
+
+    try:
+        while True:
+            t = await inboundQ.get()
+            tokens = t.split(" ")
+
+            # await outboundQ.put(f"L A {'+' if limit.isPressed() else '-'}")
+            # print(t)
+
+            if(tokens[0] == 'ECHO'):
+                m = t[t.find(' ')+1:]
+                print(f"Echoing t: {m}" )
+                await outboundQ.put(t)
+            elif(tokens[0] == 'ENBL'):
+                motor = motorsSet[getMotorId(tokens[1])]
+                motor.enable(GenericStepper.ENABLE if tokens[2] == '+' else GenericStepper.DISABLE)
+                print(f"Processed ENBL: {t}")
+            elif(tokens[0] == 'HOME'):
+                axis = axisSet[getMotorId(tokens[1])]
+                #THIS is bad b/c its not interruptable
+                #FIXME
+                await axis.home(GenericStepper.DIRECTION_REVERSE)
+            elif(tokens[0] == 'M'):
+                motor = motorsSet[getMotorId(tokens[1])]
+                await motor.RotateSteps(
+                        GenericStepper.DIRECTION_STANDARD if tokens[2] == "+" 
+                        else GenericStepper.DIRECTION_REVERSE,
+                        int(tokens[3]))
+            else:
+                print(f"Unrecognized Command: {t}")
+    except asyncio.CancelledError:
+        print("GPIO CANCEL")
+    finally:
+        pass
+    return

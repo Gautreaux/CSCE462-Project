@@ -3,7 +3,7 @@ import asyncio
 
 
 from connectionHandler import buildConnectionHandler
-from gpioHandler import gpioHandler
+from gpioHandler import *
 from serverBackend import *
 from util import *
 
@@ -15,7 +15,9 @@ if __name__ == "__main__":
         inboundQ = asyncio.Queue()
         outboundQ = asyncio.Queue()
 
-        gpio_coro = gpioHandler(inboundQ, outboundQ)
+        k = gpioInit()
+        gpio_coro = gpioHandler(inboundQ, outboundQ, k)
+        gpio_coro2 = pushFunction(outboundQ, k)
 
         server_coro = launchServer(buildConnectionHandler(inboundQ, outboundQ),
                 host = DEFAULT_HOST if isRaspi() else FALLBACK_HOST,
@@ -23,7 +25,10 @@ if __name__ == "__main__":
 
         # Kind of want one to cancel the other if it ends but whatever
         loop.run_until_complete(server_coro)
-        loop.run_until_complete(gpio_coro)
+        loop.create_task(gpio_coro)
+        loop.create_task(gpio_coro2)
+        print("Tasks created.")
+        
         loop.run_forever()
 
         #any code down here would not be reachable until the server closes its socket

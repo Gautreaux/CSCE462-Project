@@ -86,3 +86,12 @@ class GPIOController():
         # print("Contoller exit")
         # called after del of self
         pass
+
+    def __enter__(self):
+        # print("Controller enter")
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # print("Contoller exit")
+        # called after del of self
+        pass
