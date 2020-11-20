@@ -57,6 +57,9 @@ class GenericStepper:
         self.enb.setValue(GenericPin.LOW if state is GenericStepper.ENABLE else GenericPin.HIGH)
         self.enableState = state
 
+    def isEnabled(self):
+        return self.enableState == GenericStepper.ENABLE
+
     def setDir(self, direction):
         #TODO - could be lazy evaluate in case pin setValue takes time
         self.dir.setValue(GenericPin.LOW if direction is GenericStepper.DIRECTION_STANDARD else GenericPin.HIGH)

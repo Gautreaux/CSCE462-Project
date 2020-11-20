@@ -20,3 +20,8 @@ The following commands are supported:
 
 'HOME <motor_id>' -- home motor
     Char motor_id - is a single character in inclusive range ['A', 'H']
+
+'L <motor_id> <val>'
+    Char val - 
+        '+' - the limit is pressed
+        '-' - the limit is not pressed

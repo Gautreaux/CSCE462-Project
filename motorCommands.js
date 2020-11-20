@@ -36,3 +36,8 @@ function motorEnable(motorID, boxRef){
 function motorHome(motorID){
     send("HOME " + motorID);
 }
+
+function setEnableMotor(motorID, value){
+    let motorRef = document.getElementById('motorEnable' + motorID);
+    motorRef.checked = (value == '+')
+}

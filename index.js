@@ -90,6 +90,9 @@ function onSocketReceive(event) {
     if(message[0] == 'L'){
         setIndicatorSmart(message[2], message[4]);
     }
+    else if(message.indexof('ENBL') == 0){
+        setEnableMotor(message[5], message[7]);
+    }
     else{
         console.log("Message Received '" + event.data + "'");
     }

@@ -78,10 +78,25 @@ async def pushFunction(outboundQ, gpio):
     limitsSet = gpio[4]
     axisSet = gpio[5]
 
+    lastStates = [None]*len(limitsSet)
+    lastEnabled = [None]*len(motorSets)
+
     try:
         while True:
-            print("PUSH")
-            await asyncio.sleep(1)
+            for i in range(len(limitsSet)):
+                lbl = chr(i + ord('A'))
+
+                v = limitsSet[i].isPressed()
+                if v != lastStates[i]:
+                    lastStates[i] = v
+                    await outboundQ.put(f"L {lbl} {'+' if v else '-'}")
+
+                e = motorsSet[i].isEnabled()
+                if e != lastEnabled[i]:
+                    lastEnabled[i] = e
+                    await outboundQ.put(f"ENBL {lbl} {'+' if v else '-'}")
+            
+            await asyncio.sleep(.25)
     except asyncio.CancelledError:
         print("PUSH CANCEL")
     finally:
