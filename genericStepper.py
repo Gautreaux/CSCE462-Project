@@ -13,7 +13,7 @@ class GenericStepper:
     DISABLE = 0
     ENABLE = 1
 
-    def __init__(self, enablePin, stepPin, dirPin, 
+    def __init__(self,  dirPin, stepPin, enablePin, 
             breakMode=MODE_BREAK, 
             #direction=DIRECTION_STANDARD,
             enableState=ENABLE):

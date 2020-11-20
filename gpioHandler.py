@@ -10,6 +10,9 @@ from genericStepper import GenericStepper
 from genericLimit import GenericLimit
 from genericAxis import GenericAxis
 
+def getMotorId(charID):
+    return ord(charID) - ord('A')
+
 async def gpioHandler(inboundQ, outboundQ):
     # controller = GPIOController()
     async with GPIOController() as controller:
@@ -18,56 +21,51 @@ async def gpioHandler(inboundQ, outboundQ):
         
         print(f"Available gpio protocols: {controller.getProtocols()}")
 
-        # testPin = controller.registerPin("local:10", 
-        #     GenericPin.OUTPUT, GenericPin.ON_DESTRUCT_OUT_LOW)
-        # tsetPin2 = controller.registerPin(f"{mcpProtocol.prefix}:3",
-        #     GenericPin.OUTPUT, GenericPin.ON_DESTRUCT_OUT_LOW)
+        motorSets = [
+            # (dir, step, enable)
+            # (green, yellow, white)
+            ("local:17", "local:27","local:22"), # A
+            ("local:14", "local:15","local:18"), # B
+            ("local:10", "local:09","local:11"), # C
+            ("local:00", "local:05","local:06"), # D
+            ("local:13", "local:19","local:26"), # E
+            ("local:16", "local:20","local:21"), # F
+            ("local:08", "local:07","local:01"), # G
+            ("local:23", "local:24","local:25"), # H
+        ]
+        limitButtons = [
+            f"{mcpProtocol.prefix}:14", # A
+            f"{mcpProtocol.prefix}:15", # B
+            f"{mcpProtocol.prefix}:12", # C
+            f"{mcpProtocol.prefix}:10", # D
+            f"{mcpProtocol.prefix}:8", # E
+            f"{mcpProtocol.prefix}:9", # F
+            f"{mcpProtocol.prefix}:11", # G
+            f"{mcpProtocol.prefix}:13", # H
+        ]
 
-        # testRedPin = controller.registerPin(f"{mcpProtocol.prefix}:7",
-        #         GenericPin.OUTPUT, GenericPin.ON_DESTRUCT_OUT_LOW)
-        # testGrnPin = controller.registerPin(f"{mcpProtocol.prefix}:6")
-        # testBluPin = controller.registerPin(f"{mcpProtocol.prefix}:5")
+        assert(len(limitButtons) == len(motorSets))
 
-        # await asyncio.sleep(.5)
-        # testRedPin.setValue(GenericPin.HIGH)
-        # await asyncio.sleep(.5)
-        # testRedPin.setValue(GenericPin.LOW)
-        # await asyncio.sleep(.5)
-        # testRedPin.setValue(GenericPin.HIGH)
+        pinSets = [None]*len(limitButtons)
+        motorsSet = [None]*len(limitButtons)
+        buttonPins = [None]*len(limitButtons)
+        limitsSet = [None]*len(limitButtons)
+        axisSet = [None]*len(limitButtons) # The gantrys should be on one axis
 
-        try:
-            # dirPin = controller.registerPin("local:17", GenericPin.OUTPUT)
-            # stepPin = controller.registerPin("local:27", GenericPin.OUTPUT)
-            # enablePin = controller.registerPin("local:22", GenericPin.OUTPUT)
+        for i in range(len(limitButtons)):
+            pinSets[i] = (
+                controller.registerPin(motorSets[i][0], GenericPin.OUTPUT),
+                controller.registerPin(motorSets[i][1], GenericPin.OUTPUT),
+                controller.registerPin(motorSets[i][2], GenericPin.OUTPUT),
+            )
 
-            dirPin = controller.registerPin("local:10", GenericPin.OUTPUT)
-            stepPin = controller.registerPin("local:9", GenericPin.OUTPUT)
-            enablePin = controller.registerPin("local:11", GenericPin.OUTPUT)
-        except:
-            print("Pin error")
-        else:
-            print("Pin OK")
+            motorsSet[i] = GenericStepper(*(pinSets[i]))
 
-        try: 
-            motor = GenericStepper(enablePin, stepPin, dirPin)
-        except:
-            print("Motor error")
-        else:
-            print("Motor OK")
-        #
-        # # print("Rotating 400 steps:")
-        # await motor.RotateSteps(GenericStepper.DIRECTION_STANDARD, 400)
-        # await asyncio.sleep(1)
-        # await motor.RotateSteps(GenericStepper.DIRECTION_REVERSE, 400)
+            buttonPins[i] = controller.registerPin(limitButtons[i], GenericPin.INPUT_PULL_UP)
 
-        buttonPin = controller.registerPin(f"{mcpProtocol.prefix}:8", GenericPin.INPUT_PULL_UP)
-        limit = GenericLimit(buttonPin)
+            limitsSet[i] = GenericLimit(buttonPins[i])
 
-        # while True:
-        #     print(f"Pushed: {limit.isPressed()}")
-        #     await asyncio.sleep(1)
-
-        axis = GenericAxis(limit, motor)
+            axisSet[i] = GenericAxis(limitsSet[i], motorsSet[i])
 
         print("GPIO initalized")
         try:
@@ -75,23 +73,24 @@ async def gpioHandler(inboundQ, outboundQ):
                 t = await inboundQ.get()
                 tokens = t.split(" ")
 
-                await outboundQ.put(f"L A {'+' if limit.isPressed() else '-'}")
+                # await outboundQ.put(f"L A {'+' if limit.isPressed() else '-'}")
+                # print(t)
 
                 if(tokens[0] == 'ECHO'):
                     m = t[t.find(' ')+1:]
                     print(f"Echoing t: {m}" )
                     await outboundQ.put(t)
                 elif(tokens[0] == 'ENBL'):
-                    #TODO - utilize motor id parameter
+                    motor = motorsSet[getMotorId(tokens[1])]
                     motor.enable(GenericStepper.ENABLE if tokens[2] == '+' else GenericStepper.DISABLE)
                     print(f"Processed ENBL: {t}")
                 elif(tokens[0] == 'HOME'):
-                    #TODO - implement
+                    axis = axisSet[getMotorId(tokens[1])]
+                    #THIS is bad b/c its not interruptable
+                    #FIXME
                     await axis.home(GenericStepper.DIRECTION_REVERSE)
-
-                    print("Home command not implemented.")
                 elif(tokens[0] == 'M'):
-                    #TODO - utilize motor id parameter
+                    motor = motorsSet[getMotorId(tokens[1])]
                     await motor.RotateSteps(
                             GenericStepper.DIRECTION_STANDARD if tokens[2] == "+" 
                             else GenericStepper.DIRECTION_REVERSE,
