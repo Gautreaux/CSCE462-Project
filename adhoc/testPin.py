@@ -1,4 +1,4 @@
-testPin = 11
+testPin = 0
 
 from time import sleep
 import RPi.GPIO as GPIO

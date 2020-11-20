@@ -11,7 +11,7 @@ class GenericAxis():
 
     # move to the home position
     #   should be along the motor negative direction
-    async def home(self):
+    async def home(self, direction):
         while (self.limit.isPressed() is False):
             await self.motor.step(GenericStepper.DIRECTION_REVERSE)
             if(self.motor2 is not None):

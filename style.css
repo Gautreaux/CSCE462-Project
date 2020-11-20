@@ -42,3 +42,20 @@
 
 /* .carriage{display: none;} */
 
+#expandingIndicator{
+    width: 20vw;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.indicatorAll{
+    display: inline-block;
+    width: 8vw;
+    height: 8vw;
+    line-height: 8vw;
+    border-radius: 50%;
+    border: 1px solid black;
+    text-align: center;
+}

@@ -22,7 +22,11 @@ function initFunction() {
     positionGantryA(0);
     positionGantryB(1);
 
-    initalizeControlTable();
+    //sets up the indicator table
+    genericHTMLExpansion("expandingIndicator", labels, '_')
+
+    //sets up the conroller table
+    genericHTMLExpansion("expandingTable", labels, '_')
 }
 
 //connect to a websockets server at path
@@ -82,7 +86,14 @@ function onSocketClose(event) {
 
 //called when the socket receives data
 function onSocketReceive(event) {
-    console.log("Message Received '" + event.data + "'");
+    let message = event.data;
+    if(message[0] == 'L'){
+        setIndicatorSmart(message[2], message[4]);
+    }
+    else{
+        console.log("Message Received '" + event.data + "'");
+    }
+
 }
 
 //sends the input parameter into the socket

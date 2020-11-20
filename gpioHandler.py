@@ -13,8 +13,8 @@ from genericAxis import GenericAxis
 async def gpioHandler(inboundQ, outboundQ):
     # controller = GPIOController()
     async with GPIOController() as controller:
-        # mcpProtocol = MCP23017Protocol()
-        # controller.registerProtocol(mcpProtocol)
+        mcpProtocol = MCP23017Protocol()
+        controller.registerProtocol(mcpProtocol)
         
         print(f"Available gpio protocols: {controller.getProtocols()}")
 
@@ -60,21 +60,22 @@ async def gpioHandler(inboundQ, outboundQ):
         # await asyncio.sleep(1)
         # await motor.RotateSteps(GenericStepper.DIRECTION_REVERSE, 400)
 
-        # buttonPin = controller.registerPin(f"{mcpProtocol.prefix}:8", GenericPin.INPUT_PULL_UP)
-        # limit = GenericLimit(buttonPin)
+        buttonPin = controller.registerPin(f"{mcpProtocol.prefix}:8", GenericPin.INPUT_PULL_UP)
+        limit = GenericLimit(buttonPin)
 
         # while True:
         #     print(f"Pushed: {limit.isPressed()}")
         #     await asyncio.sleep(1)
 
-        # axis = GenericAxis(limit, motor)
-        # await axis.home()
+        axis = GenericAxis(limit, motor)
 
         print("GPIO initalized")
         try:
             while True:
                 t = await inboundQ.get()
                 tokens = t.split(" ")
+
+                await outboundQ.put(f"L A {'+' if limit.isPressed() else '-'}")
 
                 if(tokens[0] == 'ECHO'):
                     m = t[t.find(' ')+1:]
@@ -86,6 +87,8 @@ async def gpioHandler(inboundQ, outboundQ):
                     print(f"Processed ENBL: {t}")
                 elif(tokens[0] == 'HOME'):
                     #TODO - implement
+                    await axis.home(GenericStepper.DIRECTION_REVERSE)
+
                     print("Home command not implemented.")
                 elif(tokens[0] == 'M'):
                     #TODO - utilize motor id parameter

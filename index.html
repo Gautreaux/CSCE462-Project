@@ -6,6 +6,7 @@
     <script src = "frameFunction.js"></script>
     <script src = "genericFunction.js"></script>
     <script src = "motorCommands.js"></script>
+    <script src = "indicatorControl.js"></script>
     <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
@@ -26,11 +27,14 @@
             
         </div>
         <div class="flexContent">
-            <div class=indicator></div>
+            <h4>Limits Indicators</h4>
+            <div id="expandingIndicator">
+                <div class="indicatorAll" id="indicator_">_</div>
+            </div>
+            
         </div>
         <div class="flexContent">
             <H4>Master Controls</H4>
-            <!-- TODO: functionality -->
             <button style="width: 100%;">STOP</button>
             <div id="expandingTable">
                 <div class="controlRow">
