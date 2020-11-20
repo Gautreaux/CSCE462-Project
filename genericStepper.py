@@ -53,6 +53,7 @@ class GenericStepper:
             self.enable(GenericStepper.DISABLE)
 
     def enable(self, state):
+        # print(f"ENABLE: {state}")
         self.enb.setValue(GenericPin.LOW if state is GenericStepper.ENABLE else GenericPin.HIGH)
         self.enableState = state
 

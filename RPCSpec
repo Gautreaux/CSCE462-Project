@@ -1,19 +1,22 @@
 All info is sent via plaintext
 
 The following commands are supported:
-'M:<motor_id><dir> <steps>'
+'M <motor_id> <dir> <steps>' -- generic movement
     Char motor_id - is a single character in inclusive range ['A', 'H']
     Char dir -
         '+' for Clockwise rotation
         '-' for Counter-Clockwise rotation
     Int steps - number of steps to take in the specified direction
 
-'ECHO <message>'
+'ECHO <message>' -- echo
     String message - string to be printed to other console
 
-'ENBL:<motor_id> <val>'
+'ENBL <motor_id> <val>'  -- enable/disable
     Char motor_id - is a single character in inclusive range ['A', 'H']
     Char val -
         '+' - the motor is enabled
         '-' - the motor is disabled
         Note: following a movement this may be reset
+
+'HOME <motor_id>' -- home motor
+    Char motor_id - is a single character in inclusive range ['A', 'H']

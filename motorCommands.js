@@ -21,7 +21,7 @@ function initalizeControlTable(){
 
     e.innerHTML = "";
 
-    console.log(indicies);
+    // console.log(indicies);
     labels.forEach(function(lbl){
         let s = ""
         let i;
@@ -31,14 +31,12 @@ function initalizeControlTable(){
         s += html.substring(indicies[indicies.length-1]+1)
         e.innerHTML += s;
     })
-
-
 }
 
 //issue a command for motor behavior
 function motorStep(motorID, dir, steps){
     let k = ((dir == LEFT)? '-':'+');
-    send("M:" + motorID + k + " " + steps);
+    send("M " + motorID + " " + k + " " + steps);
 }
 
 function motorContinue(motorID, dir){
@@ -46,8 +44,10 @@ function motorContinue(motorID, dir){
     if(activeMovement != null){
         clearInterval(activeMovement);
     }
+    //TODO - workaround?
+    //there is some limit on how fast the send can occur
     //interval to call in ms (about .2 rev/sec)
-    activeMovement = setInterval(motorStep, 25, motorID, dir, 40);
+    activeMovement = setInterval(motorStep, 25, motorID, dir, 1);
 }
 
 function motorDiscontinue(motorID, dir){
@@ -58,5 +58,9 @@ function motorDiscontinue(motorID, dir){
 }
 
 function motorEnable(motorID, boxRef){
-    send("ENBL:" + motorID + " " + ((boxRef.checked)? '1' : '0'));
+    send("ENBL " + motorID + " " + ((boxRef.checked)? '+' : '-'));
+}
+
+function motorHome(motorID){
+    send("HOME " + motorID);
 }

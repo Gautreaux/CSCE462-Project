@@ -26,18 +26,30 @@
             
         </div>
         <div class="flexContent">
+            <div class=indicator></div>
+        </div>
+        <div class="flexContent">
             <H4>Master Controls</H4>
             <!-- TODO: functionality -->
             <button style="width: 100%;">STOP</button>
             <div id="expandingTable">
                 <div class="controlRow">
                     _:
-                    <button onmousedown="motorContinue('_', LEFT)" onmouseup="motorDiscontinue('_', LEFT)">&lt&lt</button>
+                    <button class="holdLButton" 
+                        ontouchstart="motorContinue('_', LEFT)"
+                        ontouchend="motorDiscontinue('_', LEFT)"
+                        onmousedown="motorContinue('_', LEFT)"
+                        onmouseup="motorDiscontinue('_', LEFT)">&lt&lt</button>
                     <button onclick="motorStep('_', LEFT, 1)">&lt</button>
                     <button onclick="motorStep('_', RIGHT, 1)">&gt</button>
-                    <button onmousedown="motorContinue('_', RIGHT)" onmouseup="motorDiscontinue('_', RIGHT)">&gt&gt</button>
+                    <button class="holdRButton"
+                        ontouchstart="motorContinue('_', RIGHT)"
+                        ontouchend="motorDiscontinue('_', RIGHT)" 
+                        onmousedown="motorContinue('_', RIGHT)" 
+                        onmouseup="motorDiscontinue('_', RIGHT)">&gt&gt</button>
                     Enable:
                     <input type="checkBox" onclick="motorEnable('_', this)">
+                    <button onclick="motorHome('_')">&#8962;</button>
                 </div>
             </div>
         </div>

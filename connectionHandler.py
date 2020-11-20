@@ -29,6 +29,8 @@ def buildConnectionHandler(inboundQ, outboundQ):
             print("Connection closed abnormally.")
 
     async def handler(websocket, path):
+        #TODO - need subsriber model
+        #TODO - assign client IDs and Selective Broadcast
         print("Generic handler started")
         consumer_task = asyncio.ensure_future(
             consumer_handler(websocket, path))
